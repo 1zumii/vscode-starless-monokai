@@ -4,7 +4,7 @@
 // some fields is required
 // https://code.visualstudio.com/api/references/extension-manifest
 
-const VERSION = "0.4.2" satisfies `${number}.${number}.${number}`;
+const VERSION = "1.0.0" satisfies `${number}.${number}.${number}`;
 
 // relative from root dir
 export const COMMON_FILES: ([file: string] | [sourceFile: string, rename: string])[] = [

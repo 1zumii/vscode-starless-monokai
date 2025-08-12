@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.0.0
+🎉 Support Open VSX！
+
+### feature
+- improve markdown preview styles
+
 ## 0.4.2
 ### bump
 - 📦 update dependency themes

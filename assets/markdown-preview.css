@@ -25,7 +25,12 @@ code {
 blockquote {
     border-color: #61afef;
     background-color: #00468033;
-    padding: 0 16px;
+    padding: 8px 16px;
+}
+
+blockquote > ul,
+blockquote > ol {
+    margin-bottom: unset;
 }
 
 .markdown-body pre code {
@@ -36,7 +41,7 @@ blockquote {
     overflow-x: auto;
     padding: 10px;
     line-height: 24px;
-    /* white-space: pre-wrap; */
+    white-space: pre;
 }
 
 .markdown-body pre code:hover::before {
