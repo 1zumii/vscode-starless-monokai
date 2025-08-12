@@ -1,6 +1,6 @@
 import { MONOKAI_PRO_YELLOW, MonokaiPro, ONE_DARK_BLUE, OneMonokai } from "./constants/index.ts";
 import type { MonokaiGenerateResult } from "./monokai-generator.ts";
-import createMonokaiGenerator from "./monokai-generator.ts";
+import { createMonokaiGenerator } from "./monokai-generator.ts";
 import outputExtension from "./output-extension.ts";
 import { setFetchProxy } from "./utils/index.ts";
 import { Logger } from "./utils/log.ts";

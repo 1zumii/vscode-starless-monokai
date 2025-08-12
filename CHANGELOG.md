@@ -1,10 +1,14 @@
 # Change Log
 
+## 1.1.0
+### feature
+- 📝✨ more distinguishable markdown syntax highlighting
+
 ## 1.0.0
 🎉 Support Open VSX！
 
 ### feature
-- improve markdown preview styles
+- 📖✨ improve markdown preview styles
 
 ## 0.4.2
 ### bump

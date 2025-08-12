@@ -17,10 +17,13 @@ import {
 } from "./utils/index.ts";
 import { TEMP_DIR_PATH, THEME_APPEND_CONFIG } from "./constants/index.ts";
 import { generateWorkBenchColors } from "./generate-workbench-colors.ts";
+import { generateMarkdownSyntaxHighlighting } from "./markdown-syntax-highlighting.ts";
 
 const tempDirPath = path.resolve(process.cwd(), TEMP_DIR_PATH);
 
-const createMonokaiGenerator = ({
+export type MonokaiGenerateResult = NonNullable<Awaited<ReturnType<ReturnType<typeof createMonokaiGenerator>["run"]>>>;
+
+export const createMonokaiGenerator = ({
     themeName,
     sourceExtension,
     findThemeConfigInPackage,
@@ -144,7 +147,7 @@ const createMonokaiGenerator = ({
         return ansi;
     };
 
-    const setWorkbenchColors = (themeConfig: ThemeConfig, ansiColor: AnsiColor): ThemeConfig => {
+    const setWorkbenchColors = (themeConfig: Readonly<ThemeConfig>, ansiColor: AnsiColor): ThemeConfig => {
         const workbenchColors = generateWorkBenchColors(ansiColor);
 
         return {
@@ -204,6 +207,8 @@ const createMonokaiGenerator = ({
 
             themeConfig = setWorkbenchColors(themeConfig, ansiColor);
 
+            const mdTokens = generateMarkdownSyntaxHighlighting(themeConfig, ansiColor);
+
             const { type, colorSpaceName, colors, tokenColors } = themeConfig;
 
             return {
@@ -215,13 +220,12 @@ const createMonokaiGenerator = ({
                     type,
                     colorSpaceName,
                     colors,
-                    tokenColors,
+                    tokenColors: [
+                        ...tokenColors,
+                        ...mdTokens,
+                    ],
                 },
             };
         },
     };
 };
-
-export type MonokaiGenerateResult = NonNullable<Awaited<ReturnType<ReturnType<typeof createMonokaiGenerator>["run"]>>>;
-
-export default createMonokaiGenerator;
