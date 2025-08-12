@@ -4,7 +4,7 @@
 // some fields is required
 // https://code.visualstudio.com/api/references/extension-manifest
 
-const VERSION = "1.1.0" satisfies `${number}.${number}.${number}`;
+const VERSION = "1.1.1" satisfies `${number}.${number}.${number}`;
 
 // relative from root dir
 export const COMMON_FILES: ([file: string] | [sourceFile: string, rename: string])[] = [
@@ -39,7 +39,10 @@ export const MANIFEST = {
         ],
         "themes": [] as unknown[],
     },
-    files: COMMON_FILES.map(([filePath, renamePath]) => renamePath ?? filePath),
+    files: [
+        ...COMMON_FILES.map(([filePath, renamePath]) => renamePath ?? filePath),
+        "themes/*.json",
+    ],
 };
 
 export const MANIFEST_SOURCES_KEY = "sources";
