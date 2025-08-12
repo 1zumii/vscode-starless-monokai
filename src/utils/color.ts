@@ -1,5 +1,5 @@
-import ColorConvert from 'color';
-import type { Color, Hex } from '../types/index.ts';
+import ColorConvert from "color";
+import type { Color, Hex } from "../types/index.ts";
 
 export const brighter = (inputColor: Color): Color => {
     const brighterColor = ColorConvert(inputColor).saturate(0.1).lighten(0.1);
@@ -14,6 +14,6 @@ export const darker = (inputColor: Color): Color => {
 };
 
 // more transparent
-export const fade = (inputColor: Color, alpha: `${Hex}${Hex}` = '7f'): Color => {
+export const fade = (inputColor: Color, alpha: `${Hex}${Hex}` = "7f"): Color => {
     return `${inputColor}${alpha}`;
 };

@@ -1,7 +1,7 @@
-import type { OverrideProperties } from 'type-fest';
-import type { TextMateThemingRule, TokenColorizationSetting } from './vscode.ts';
+import type { OverrideProperties } from "type-fest";
+import type { TextMateThemingRule, TokenColorizationSetting } from "./vscode.ts";
 
-export type Hex = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f';
+export type Hex = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "a" | "b" | "c" | "d" | "e" | "f";
 
 export type Color = `#${string}`;
 
@@ -17,7 +17,7 @@ export type ThemeConfig = {
 export type LegacyThemeConfig = OverrideProperties<
     ThemeConfig,
     {
-        tokenColors: (Pick<TextMateThemingRule, 'scope'> & {
+        tokenColors: (Pick<TextMateThemingRule, "scope"> & {
             settings: TokenColorizationSetting & {
                 name?: string;
                 Name?: string;

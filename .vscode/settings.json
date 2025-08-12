@@ -1,4 +1,39 @@
 {
-    "editor.defaultColorDecorators": true,
+    "editor.colorDecorators": true,
+    "editor.defaultColorDecorators": "always",
     "eslint.experimental.useFlatConfig": true, // Enable the ESlint flat config support
+
+    // Disable the default formatter, use eslint instead
+    "editor.formatOnSave": false,
+
+    // Auto fix
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+        "source.organizeImports": "never"
+    },
+
+    // Enable eslint for all supported languages
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+        "vue",
+        "html",
+        "markdown",
+        "json",
+        "jsonc",
+        "yaml",
+        "toml",
+        "xml",
+        "gql",
+        "graphql",
+        "astro",
+        "svelte",
+        "css",
+        "less",
+        "scss",
+        "pcss",
+        "postcss"
+    ]
 }

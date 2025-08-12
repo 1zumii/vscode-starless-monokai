@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.4.2
+### bump
+- 📦 update dependency themes
+    - pro: 2.0.7
+    - one: 0.5.2
+
 ## 0.4.1
 ### fix
 - 🖨️ remove duplicate source infos in extension's manifest

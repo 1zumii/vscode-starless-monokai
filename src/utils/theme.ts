@@ -1,4 +1,4 @@
-import type { LegacyThemeConfig, ThemeConfig } from '../types/index.ts';
+import type { LegacyThemeConfig, ThemeConfig } from "../types/index.ts";
 
 export const isLegacyThemeConfig = (
     themeConfigLike: Record<string, any>,

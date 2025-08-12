@@ -1,6 +1,6 @@
-import { ANSI_COLOR_CONTRAST_ORDER } from './constants/index.ts';
-import type { AnsiColor, Color } from './types/index.ts';
-import { brighter, capitalize, fade } from './utils/index.ts';
+import { ANSI_COLOR_CONTRAST_ORDER } from "./constants/index.ts";
+import type { AnsiColor, Color } from "./types/index.ts";
+import { brighter, capitalize, fade } from "./utils/index.ts";
 
 export const generateWorkBenchColors = (
     ansiColor: Readonly<AnsiColor>,
@@ -35,14 +35,14 @@ export const generateWorkBenchColors = (
         },
         // cursor
         (set) => {
-            set('editorCursor.foreground', ansiColor.cyan);
-            set('editorCursor.background', ansiColor.black);
+            set("editorCursor.foreground", ansiColor.cyan);
+            set("editorCursor.background", ansiColor.black);
         },
         // editorLineNumber
         (set) => {
-            const cursorColor = workbenchColors['editorCursor.foreground'];
-            set('editorLineNumber.activeForeground', cursorColor);
-            set('editor.lineHighlightBackground', fade(cursorColor, '1f'));
+            const cursorColor = workbenchColors["editorCursor.foreground"];
+            set("editorLineNumber.activeForeground", cursorColor);
+            set("editor.lineHighlightBackground", fade(cursorColor, "1f"));
         },
         // bracket pair colorization
         (set) => {
@@ -61,38 +61,38 @@ export const generateWorkBenchColors = (
         },
         // Lightbulb
         (set) => {
-            set('editorLightBulb.foreground', ansiColor.magenta);
-            set('editorLightBulbAutoFix.foreground', ansiColor.cyan);
+            set("editorLightBulb.foreground", ansiColor.magenta);
+            set("editorLightBulbAutoFix.foreground", ansiColor.cyan);
         },
         // Text colors
         (set) => {
-            set('textLink.activeForeground', ansiColor.cyan);
-            set('textLink.foreground', ansiColor.blue);
+            set("textLink.activeForeground", ansiColor.cyan);
+            set("textLink.foreground", ansiColor.blue);
         },
         // Git colors
         (set) => {
-            set('gitDecoration.modifiedResourceForeground', ansiColor.yellow);
-            set('gitDecoration.untrackedResourceForeground', ansiColor.green);
-            set('gitDecoration.conflictingResourceForeground', ansiColor.red);
-            set('gitDecoration.deletedResourceForeground', ansiColor.magenta);
-            set('gitDecoration.renamedResourceForeground', ansiColor.cyan);
+            set("gitDecoration.modifiedResourceForeground", ansiColor.yellow);
+            set("gitDecoration.untrackedResourceForeground", ansiColor.green);
+            set("gitDecoration.conflictingResourceForeground", ansiColor.red);
+            set("gitDecoration.deletedResourceForeground", ansiColor.magenta);
+            set("gitDecoration.renamedResourceForeground", ansiColor.cyan);
 
-            set('gitDecoration.stageModifiedResourceForeground', brighter(ansiColor.yellow));
-            set('gitDecoration.stageDeletedResourceForeground', brighter(ansiColor.magenta));
+            set("gitDecoration.stageModifiedResourceForeground", brighter(ansiColor.yellow));
+            set("gitDecoration.stageDeletedResourceForeground", brighter(ansiColor.magenta));
 
             // error file color controlled by `list.errorForeground`
         },
         // Editor colors
         (set) => {
-            set('editorError.foreground', ansiColor.red);
-            set('editorWarning.foreground', ansiColor.yellow);
-            set('editorInfo.foreground', ansiColor.magenta);
-            set('editorHint.foreground', ansiColor.cyan);
+            set("editorError.foreground", ansiColor.red);
+            set("editorWarning.foreground", ansiColor.yellow);
+            set("editorInfo.foreground", ansiColor.magenta);
+            set("editorHint.foreground", ansiColor.cyan);
         },
         // Lists and trees
         (set) => {
-            set('list.errorForeground', ansiColor.red);
-            set('list.warningForeground', brighter(ansiColor.yellow));
+            set("list.errorForeground", ansiColor.red);
+            set("list.warningForeground", brighter(ansiColor.yellow));
         },
     ];
 

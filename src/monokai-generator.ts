@@ -1,22 +1,22 @@
-import fs from 'node:fs';
-import fsp from 'node:fs/promises';
-import path from 'node:path';
-import process from 'node:process';
-import stream from 'node:stream';
-import streamp from 'node:stream/promises';
-import fse from 'fs-extra';
-import UnZipper from 'unzipper';
-import ColorConvert from 'color';
-import type { AnsiColor, Color, GeneratorConfig, ThemeConfig } from './types/index.ts';
+import fs from "node:fs";
+import fsp from "node:fs/promises";
+import path from "node:path";
+import process from "node:process";
+import stream from "node:stream";
+import streamp from "node:stream/promises";
+import fse from "fs-extra";
+import UnZipper from "unzipper";
+import ColorConvert from "color";
+import type { AnsiColor, Color, GeneratorConfig, ThemeConfig } from "./types/index.ts";
 import {
     capitalize,
     clonePlainObject,
     isLegacyThemeConfig,
     queryExtensionInfoFromMarketplace,
     transformLegacyThemeConfig,
-} from './utils/index.ts';
-import { TEMP_DIR_PATH, THEME_APPEND_CONFIG } from './constants/index.ts';
-import { generateWorkBenchColors } from './generate-workbench-colors.ts';
+} from "./utils/index.ts";
+import { TEMP_DIR_PATH, THEME_APPEND_CONFIG } from "./constants/index.ts";
+import { generateWorkBenchColors } from "./generate-workbench-colors.ts";
 
 const tempDirPath = path.resolve(process.cwd(), TEMP_DIR_PATH);
 
@@ -37,7 +37,7 @@ const createMonokaiGenerator = ({
 
         if (!response.body)
             // TODO: better error description
-            throw new Error('response body is empty');
+            throw new Error("response body is empty");
 
         await fse.ensureDir(tempDirPath);
 
@@ -58,11 +58,11 @@ const createMonokaiGenerator = ({
     const getThemeConfig = async (version: string, fetchPackage: () => Promise<Response>): Promise<ThemeConfig | void> => {
         const packageFilePath = path.resolve(
             tempDirPath,
-            [sourceExtension.name, version, 'source.zip'].join('-'),
+            [sourceExtension.name, version, "source.zip"].join("-"),
         );
         const themeConfigFilePath = path.resolve(
             tempDirPath,
-            [...themeName, version, 'source.json'].join('-'),
+            [...themeName, version, "source.json"].join("-"),
         );
 
         await downloadThemePackage(fetchPackage, packageFilePath);
@@ -70,11 +70,11 @@ const createMonokaiGenerator = ({
         // get theme json file from package.zip
         await fs.createReadStream(packageFilePath)
             .pipe(UnZipper.Parse())
-            .on('entry', (entry) => {
+            .on("entry", (entry) => {
                 const fileName: string = entry.path;
-                const type: 'Directory' | 'File' = entry.type;
+                const type: "Directory" | "File" = entry.type;
 
-                if (type !== 'File') {
+                if (type !== "File") {
                     entry.autodrain();
                     return;
                 }
@@ -89,14 +89,14 @@ const createMonokaiGenerator = ({
             .promise();
 
         // read theme json file, parse to object
-        const themeConfigFileContent = await fsp.readFile(themeConfigFilePath, { encoding: 'utf-8' });
+        const themeConfigFileContent = await fsp.readFile(themeConfigFilePath, { encoding: "utf-8" });
         try {
             const themeRawConfig = JSON.parse(themeConfigFileContent);
             return formateThemeConfig(themeRawConfig);
         }
         catch {
             // TODO:
-            throw new Error(' ');
+            throw new Error(" ");
         }
     };
 
@@ -133,7 +133,7 @@ const createMonokaiGenerator = ({
                         return result;
                     }
                 },
-                { delta: Number.POSITIVE_INFINITY, color: '#ff007f' as Color },
+                { delta: Number.POSITIVE_INFINITY, color: "#ff007f" as Color },
             );
             if (!matchResult.color)
                 return;
@@ -166,15 +166,15 @@ const createMonokaiGenerator = ({
             const latestVersionAsset = targetExtension?.versions[0];
             if (!latestVersionAsset) {
                 // TODO: better error description
-                throw new Error('extension not found');
+                throw new Error("extension not found");
             }
 
             const latestVersion = latestVersionAsset.version;
-            const latestVersionExtensionUrl = latestVersionAsset.files.find(({ assetType }) => assetType === 'Microsoft.VisualStudio.Services.VSIXPackage')?.source;
+            const latestVersionExtensionUrl = latestVersionAsset.files.find(({ assetType }) => assetType === "Microsoft.VisualStudio.Services.VSIXPackage")?.source;
 
             if (!latestVersionExtensionUrl) {
                 // TODO: better error description
-                throw new Error('extension url not found');
+                throw new Error("extension url not found");
             }
 
             const sourceThemeConfig = await getThemeConfig(
@@ -207,10 +207,10 @@ const createMonokaiGenerator = ({
             const { type, colorSpaceName, colors, tokenColors } = themeConfig;
 
             return {
-                fileName: `${themeName.join('-')}.json`,
+                fileName: `${themeName.join("-")}.json`,
                 sourceExtension: targetExtension,
                 themeConfig: {
-                    name: themeName.map(s => capitalize(s)).join(' '),
+                    name: themeName.map(s => capitalize(s)).join(" "),
                     ...THEME_APPEND_CONFIG,
                     type,
                     colorSpaceName,
@@ -222,6 +222,6 @@ const createMonokaiGenerator = ({
     };
 };
 
-export type MonokaiGenerateResult = NonNullable<Awaited<ReturnType<ReturnType<typeof createMonokaiGenerator>['run']>>>;
+export type MonokaiGenerateResult = NonNullable<Awaited<ReturnType<ReturnType<typeof createMonokaiGenerator>["run"]>>>;
 
 export default createMonokaiGenerator;

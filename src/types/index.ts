@@ -1,7 +1,7 @@
-import type { AnsiColor, ThemeConfig } from './theme.ts';
+import type { AnsiColor, ThemeConfig } from "./theme.ts";
 
-export * from './vscode.ts';
-export * from './theme.ts';
+export * from "./vscode.ts";
+export * from "./theme.ts";
 
 export type Version = [major: number, minor: number, patch: number];
 

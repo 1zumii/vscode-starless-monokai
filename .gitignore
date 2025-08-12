@@ -10,6 +10,3 @@ node_modules
 # Do not add accidental yarn.lock or pnpm-lock.yaml
 yarn.lock
 pnpm-lock.yaml
-
-# log
-.swc

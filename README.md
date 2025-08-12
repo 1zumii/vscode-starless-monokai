@@ -9,10 +9,7 @@
 refer to [*Debugging the extension*](https://code.visualstudio.com/api/get-started/your-first-extension#debugging-the-extension)
 
 ### npm scripts
-- `dev`: build ts project, and run node script to generate extension
-- `build`: build ts project
 - `generate`: run node script to generate extension
-- `compile:build-scripts`: compile build scripts by tsc
 
 ### dev references
 - [Extension API](https://code.visualstudio.com/api)

@@ -1,31 +1,32 @@
-import eslint from '@antfu/eslint-config';
+import eslint from "@antfu/eslint-config";
 
 export default eslint(
     {
         stylistic: {
             indent: 4,
+            quotes: "double",
         },
         ignores: [
-            './dist',
-            '**/bin/**/*.js',
+            "./dist",
+            "**/bin/**/*.js",
         ],
     },
     {
         rules: {
-            'style/semi': ['error', 'always'],
-            'antfu/top-level-function': 'off',
+            "style/semi": ["error", "always"],
+            "antfu/top-level-function": "off",
         },
     },
     {
-        files: ['**/*.ts'],
+        files: ["**/*.ts"],
         rules: {
-            'ts/consistent-type-definitions': ['error', 'type'],
-            'style/member-delimiter-style': [
-                'error',
+            "ts/consistent-type-definitions": ["error", "type"],
+            "style/member-delimiter-style": [
+                "error",
                 {
-                    multiline: { delimiter: 'semi', requireLast: true },
-                    singleline: { delimiter: 'semi', requireLast: false },
-                    multilineDetection: 'brackets',
+                    multiline: { delimiter: "semi", requireLast: true },
+                    singleline: { delimiter: "semi", requireLast: false },
+                    multilineDetection: "brackets",
                 },
             ],
         },

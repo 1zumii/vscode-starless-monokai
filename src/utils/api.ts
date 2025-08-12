@@ -64,11 +64,11 @@ export const queryExtensionInfoFromMarketplace = async (extensionName: `${string
     const response = await fetch(
         `https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery`,
         {
-            method: 'POST',
+            method: "POST",
             body: JSON.stringify(params),
             headers: {
-                'Content-type': 'application/json',
-                'Accept': 'application/json;api-version=7.2-preview.1;excludeUrls=true',
+                "Content-type": "application/json",
+                "Accept": "application/json;api-version=7.2-preview.1;excludeUrls=true",
             },
         },
     );

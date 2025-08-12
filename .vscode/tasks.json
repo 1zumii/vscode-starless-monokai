@@ -4,64 +4,40 @@
  * backgroundTask: code.visualstudio.com/docs/editor/tasks#_background-watching-tasks
  */
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "build",
-			"type": "npm",
-			"script": "build:watch",
-			"isBackground": true,
-			"problemMatcher": {
-				"owner": "swc",
-				"fileLocation": "relative",
-				"pattern": {
-					"regexp": "^\\[SWC\\] Building Failed",
-					"file": 1,
-					"location": 2,
-					"severity": 3,
-				},
-				"background": {
-					"activeOnStart": true,
-					"beginsPattern": "^\\[SWC\\] Building Start$",
-					"endsPattern": "^\\[SWC\\] Building Finished$"
-				}
-			},
-			"presentation": {
-				"reveal": "never"
-			},
-		},
-		{
-			"label": "generate",
-			"type": "npm",
-			"script": "generate:watch",
-			"isBackground": true,
-			"problemMatcher": {
-				"owner": "nodemon",
-				"fileLocation": "relative",
-				"pattern": {
-					"regexp": "^\\[nodemon\\] app crashed - waiting for file changes before starting\\.\\.\\.$",
-					"file": 1,
-					"location": 2,
-					"severity": 3,
-				},
-				"background": {
-					"activeOnStart": true,
-					"beginsPattern": "^\\[nodemon\\] files triggering change check: (.+)$",
-					"endsPattern": "^\\[nodemon\\] clean exit - waiting for changes before restart$"
-				}
-			},
-			"presentation": {
-				"reveal": "never"
-			},
-		},
-		{
-			"label": "prelaunch",
-			"problemMatcher": [],
-			"dependsOrder": "sequence",
-			"dependsOn": [
-				"build",
-				"generate"
-			],
-		}
-	]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "generate",
+            "type": "npm",
+            "script": "generate:watch",
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "typescript",
+                "fileLocation": "relative",
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error)\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "Generating extension...|Restarting './src/index.ts'",
+                    "endsPattern": "Completed running './src/index.ts'. Waiting for file changes before restarting..."
+                }
+            },
+            "presentation": {
+                "reveal": "never"
+            }
+        },
+        {
+            "label": "prelaunch",
+            "problemMatcher": [],
+            "dependsOn": [
+                "generate"
+            ]
+        }
+    ]
 }

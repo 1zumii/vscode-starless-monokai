@@ -1,4 +1,4 @@
-import type { Color } from './theme.ts';
+import type { Color } from "./theme.ts";
 
 /**
  * more references

@@ -1,9 +1,8 @@
-import path from 'node:path';
-import process from 'node:process';
-import fse from 'fs-extra';
-import { COMMON_FILES, MANIFEST, MANIFEST_SOURCES_KEY, OUTPUT_EXTENSION_DIR_PATH } from './constants/index.ts';
-import type { MonokaiGenerateResult } from './monokai-generator.ts';
-import type { Version } from './types/index.ts';
+import path from "node:path";
+import process from "node:process";
+import fse from "fs-extra";
+import { COMMON_FILES, MANIFEST, MANIFEST_SOURCES_KEY, OUTPUT_EXTENSION_DIR_PATH } from "./constants/index.ts";
+import type { MonokaiGenerateResult } from "./monokai-generator.ts";
 
 const outputExtension = async (themes: MonokaiGenerateResult[]) => {
     // output
@@ -31,12 +30,12 @@ const outputExtension = async (themes: MonokaiGenerateResult[]) => {
     packageJson.contributes.themes = themes.map(
         theme => ({
             label: theme.themeConfig.name,
-            uiTheme: 'vs-dark',
+            uiTheme: "vs-dark",
             path: `./themes/${theme.fileName}`,
         }),
     );
     await fse.writeJSON(
-        path.resolve(process.cwd(), OUTPUT_EXTENSION_DIR_PATH, 'package.json'),
+        path.resolve(process.cwd(), OUTPUT_EXTENSION_DIR_PATH, "package.json"),
         packageJson,
         { spaces: 4 },
     );
@@ -50,14 +49,14 @@ const outputExtension = async (themes: MonokaiGenerateResult[]) => {
 
     // output themes
     await fse.emptyDir(
-        path.resolve(process.cwd(), OUTPUT_EXTENSION_DIR_PATH, 'themes'),
+        path.resolve(process.cwd(), OUTPUT_EXTENSION_DIR_PATH, "themes"),
     );
     await Promise.all(
         themes.map(({ fileName, themeConfig }) => fse.writeJSON(
             path.resolve(
                 process.cwd(),
                 OUTPUT_EXTENSION_DIR_PATH,
-                'themes',
+                "themes",
                 fileName,
             ),
             themeConfig,
