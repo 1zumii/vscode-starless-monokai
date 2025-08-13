@@ -4,7 +4,7 @@
 // some fields is required
 // https://code.visualstudio.com/api/references/extension-manifest
 
-const VERSION = "1.1.1" satisfies `${number}.${number}.${number}`;
+const VERSION = "1.1.2" satisfies `${number}.${number}.${number}`;
 
 // relative from root dir
 export const COMMON_FILES: ([file: string] | [sourceFile: string, rename: string])[] = [
@@ -13,7 +13,8 @@ export const COMMON_FILES: ([file: string] | [sourceFile: string, rename: string
     ["CHANGELOG.md"],
     ["assets/markdown-preview.css"],
     ["assets/icon.png"],
-    ["assets/screenshot-1.png"],
+
+    // DO NOT includes README assets - `vsce` may automatically processes them to GitHub CDN
 ];
 
 // output as extension's package.json
