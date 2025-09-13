@@ -1,7 +1,8 @@
 # Change Log
 
 ## 1.1.2
-
+### performance
+- 🚀 reduce output size
 
 ## 1.1.0
 ### feature

@@ -1,20 +1,19 @@
 {
     "compilerOptions": {
+        "skipLibCheck": true,
         // strictness
         "strict": true,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "noUnusedParameters": true,
         // transpiling
-        "module": "Node16",
-        "moduleResolution": "Node16",
-        "target": "es2022",
+        "module": "preserve",
         "noEmit": true,
         "allowImportingTsExtensions": true,
         // running
         "lib": [
             "es2022"
-        ],
+        ]
     },
     "include": [
         "src/**/*"

@@ -1,13 +1,30 @@
 import path from "node:path";
 import process from "node:process";
 import fse from "fs-extra";
-import { COMMON_FILES, MANIFEST, MANIFEST_SOURCES_KEY, OUTPUT_EXTENSION_DIR_PATH } from "./constants/index.ts";
-import type { MonokaiGenerateResult } from "./monokai-generator.ts";
+import { build } from "tsdown";
+import { COMMON_FILES, EXTENSION_ENTRY_DIR, MANIFEST, MANIFEST_SOURCES_KEY } from "./extension-manifest.ts";
+import type { MonokaiGenerateResult } from "./theme-generator/monokai-generator.ts";
 
-const outputExtension = async (themes: MonokaiGenerateResult[]) => {
+// same as extensionDevelopmentPath in .vscode/launch.json args
+export const OUTPUT_EXTENSION_DIR_PATH = "dist/extension";
+
+export const outputExtension = async (themes: MonokaiGenerateResult[]) => {
+    const projectRoot = process.cwd();
+
     // output
-    const outputExtensionRoot = path.resolve(process.cwd(), OUTPUT_EXTENSION_DIR_PATH);
+    const outputExtensionRoot = path.resolve(projectRoot, OUTPUT_EXTENSION_DIR_PATH);
     await fse.emptyDir(outputExtensionRoot);
+
+    // compile extension source code
+    await build({
+        platform: "node",
+        entry: path.resolve(projectRoot, "src/extension", "index.ts"),
+        outDir: path.resolve(outputExtensionRoot, EXTENSION_ENTRY_DIR),
+        external: ["vscode"],
+        // NOTE: VS Code extension host doesn't support ESM as entry format yet, until v1.100, using CommonJS for compatibility
+        // https://code.visualstudio.com/updates/v1_100#_extension-authoring
+        format: "commonjs",
+    });
 
     // output package.json
     const packageJson = {
@@ -34,6 +51,7 @@ const outputExtension = async (themes: MonokaiGenerateResult[]) => {
             path: `./themes/${theme.fileName}`,
         }),
     );
+
     await fse.writeJSON(
         path.resolve(process.cwd(), OUTPUT_EXTENSION_DIR_PATH, "package.json"),
         packageJson,
@@ -41,11 +59,14 @@ const outputExtension = async (themes: MonokaiGenerateResult[]) => {
     );
 
     // copy some files from root dir
-    const projectRoot = process.cwd();
-    await Promise.all(COMMON_FILES.map(([filePath, renamePath]) => fse.copy(
-        path.resolve(projectRoot, filePath),
-        path.resolve(outputExtensionRoot, renamePath ?? filePath),
-    )));
+    await Promise.all(
+        COMMON_FILES.map(
+            ([filePath, renamePath]) => fse.copy(
+                path.resolve(projectRoot, filePath),
+                path.resolve(outputExtensionRoot, renamePath ?? filePath),
+            ),
+        ),
+    );
 
     // output themes
     await fse.emptyDir(
@@ -64,5 +85,3 @@ const outputExtension = async (themes: MonokaiGenerateResult[]) => {
         )),
     );
 };
-
-export default outputExtension;
