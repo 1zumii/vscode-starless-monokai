@@ -1,103 +1,95 @@
-import { MONOKAI_PRO_YELLOW, MonokaiPro, ONE_DARK_BLUE, OneMonokai } from "./constants/index.ts";
-import type { MonokaiGenerateResult } from "./monokai-generator.ts";
-import { createMonokaiGenerator } from "./monokai-generator.ts";
-import outputExtension from "./output-extension.ts";
-import { setFetchProxy } from "./utils/index.ts";
-import { Logger } from "./utils/log.ts";
+import path from "node:path";
+import process from "node:process";
+import fse from "fs-extra";
+import { build } from "tsdown";
+import { generateTheme } from "./theme-generator/index.ts";
+import { COMMON_FILES, EXTENSION_ENTRY_DIR, MANIFEST, MANIFEST_SOURCES_KEY } from "./extension-manifest.ts";
+import { copyResourcesToOutput } from "./extension/resources/index.ts";
 
-// NOTE: if necessary
-setFetchProxy("http://127.0.0.1:7890");
+// same as extensionDevelopmentPath in .vscode/launch.json args
+export const OUTPUT_EXTENSION_DIR_PATH = "dist/output-ext";
 
 (async () => {
-    try {
-        const themeGenerateResults = await Promise.all([
-            createMonokaiGenerator({
-                themeName: ["starless", "monokai", "pro"],
-                sourceExtension: MonokaiPro,
-                findThemeConfigInPackage: filePath => filePath === "extension/themes/Monokai Pro.json",
-                presetAnsiColors: {
-                    black: "#403e41",
-                    blue: ONE_DARK_BLUE,
-                    cyan: "#78dce8",
-                    green: "#a9dc76",
-                    magenta: "#ab9df2",
-                    red: "#ff6188",
-                    white: "#d7dae0",
-                    yellow: "#fc9867",
-                },
-                preprocessThemeConfig: (config) => {
-                    config.tokenColors.forEach((token) => {
-                        if (token.settings.foreground === MONOKAI_PRO_YELLOW)
-                            token.settings.foreground = ONE_DARK_BLUE;
-                    });
-                    return config;
-                },
-            }),
-            createMonokaiGenerator({
-                themeName: ["starless", "monokai", "atom"],
-                // same as monokai-pro
-                sourceExtension: MonokaiPro,
-                findThemeConfigInPackage: filePath => filePath === "extension/themes/Monokai Pro.json",
-                presetAnsiColors: {
-                    black: "#403e41",
-                    blue: ONE_DARK_BLUE,
-                    cyan: "#78dce8",
-                    green: "#a9dc76",
-                    magenta: "#ab9df2",
-                    red: "#ff6188",
-                    white: "#d7dae0",
-                    yellow: "#fc9867",
-                },
-                // different from monokai-pro, swap the colors of Function and String
-                preprocessThemeConfig: (config) => {
-                    const monokaiProGreen = config.tokenColors.find((token) => {
-                        if (Array.isArray(token.scope))
-                            return token.scope.includes("entity.name.function");
-                        else
-                            return token.scope === "entity.name.function";
-                    })?.settings.foreground;
+    const projectRoot = process.cwd();
 
-                    if (!monokaiProGreen) {
-                        // TODO: error log
-                        return config;
-                    }
+    // Phase 0: Data Generation
+    // Perform all data generation and network requests first to fail fast.
+    const themes = await generateTheme();
 
-                    config.tokenColors.forEach((token) => {
-                        // set String to green
-                        if (token.settings.foreground === MONOKAI_PRO_YELLOW)
-                            token.settings.foreground = monokaiProGreen;
-                        // set Function to blue
-                        else if (token.settings.foreground === monokaiProGreen)
-                            token.settings.foreground = ONE_DARK_BLUE;
-                    });
+    // Phase 1: Prepare Output Directory
+    // Clear any previous build artifacts to ensure a clean slate.
+    const outputExtensionRoot = path.resolve(projectRoot, OUTPUT_EXTENSION_DIR_PATH);
+    await fse.emptyDir(outputExtensionRoot);
 
-                    return config;
-                },
-            }),
-            createMonokaiGenerator({
-                themeName: ["starless", "monokai", "one"],
-                sourceExtension: OneMonokai,
-                findThemeConfigInPackage: filePath => filePath === "extension/themes/OneMonokai-color-theme.json",
-                presetAnsiColors: {
-                    black: "#2d3139",
-                    blue: "#61afef",
-                    green: "#98c379",
-                    yellow: "#e5c07b",
-                    cyan: "#56b6c2",
-                    magenta: "#c678dd",
-                    red: "#e06c75",
-                    white: "#abb2bf",
-                },
-            }),
-        ].map(generator => generator.run()));
+    // Phase 2: Output Extension Files
+    // Write all generated data and compiled code to the output directory.
 
-        const themes = themeGenerateResults.filter(
-            (theme): theme is MonokaiGenerateResult => !!theme,
-        );
+    // 2.1. Compile extension source code
+    // This bundles the TypeScript code from `src/extension` into a single `main.js` file.
+    await build({
+        platform: "node",
+        entry: path.resolve(projectRoot, "src/extension", "index.ts"),
+        outDir: path.resolve(outputExtensionRoot, EXTENSION_ENTRY_DIR),
+        external: ["vscode"],
+        // NOTE: VS Code extension host doesn't support ESM as entry format yet, until v1.100, using CommonJS for compatibility
+        // https://code.visualstudio.com/updates/v1_100#_extension-authoring
+        format: "commonjs",
+    });
 
-        await outputExtension(themes);
-    }
-    catch (error) {
-        Logger.error(error);
-    }
+    // 2.2. Output theme files
+    const themesRoot = path.resolve(outputExtensionRoot, "themes");
+    await fse.emptyDir(themesRoot);
+    await Promise.all(
+        themes.map(({ fileName, themeConfig }) => fse.writeJSON(
+            path.resolve(themesRoot, fileName),
+            themeConfig,
+            { spaces: 4 },
+        )),
+    );
+
+    // 2.3. Output package.json
+    const packageJson = {
+        ...MANIFEST,
+        [MANIFEST_SOURCES_KEY]: themes.reduce(
+            (sources, { sourceExtension }) => {
+                const { publisher, versions, extensionName } = sourceExtension;
+                const { publisherName } = publisher;
+                const latestVersion = versions[0].version;
+
+                const sourceExtensionKey = `${publisherName}.${extensionName}`;
+                if (!sources.find(([key]) => sourceExtensionKey === key))
+                    sources.push([sourceExtensionKey, latestVersion]);
+
+                return sources;
+            },
+            [] as [string, string][],
+        ),
+    };
+
+    packageJson.contributes.themes = themes.map(
+        theme => ({
+            label: theme.themeConfig.name,
+            uiTheme: "vs-dark",
+            path: `./themes/${theme.fileName}`,
+        }),
+    );
+
+    await fse.writeJSON(
+        path.resolve(outputExtensionRoot, "package.json"),
+        packageJson,
+        { spaces: 4 },
+    );
+
+    // 2.4. Copy common files and resources
+    await Promise.all([
+        // Copy files from the project root (e.g., README, LICENSE)
+        ...COMMON_FILES.map(
+            ([filePath, renamePath]) => fse.copy(
+                path.resolve(projectRoot, filePath),
+                path.resolve(outputExtensionRoot, renamePath ?? filePath),
+            ),
+        ),
+        // Copy extension resources (e.g., templates, css)
+        copyResourcesToOutput(path.resolve(outputExtensionRoot, EXTENSION_ENTRY_DIR)),
+    ]);
 })();

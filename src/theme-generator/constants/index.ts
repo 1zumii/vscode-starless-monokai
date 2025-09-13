@@ -1,6 +1,5 @@
 import type { ExtensionInfo } from "../types/index.ts";
 
-export * from "./extension-manifest.ts";
 export * from "./color.ts";
 
 export const MonokaiPro: ExtensionInfo = {
@@ -18,9 +17,6 @@ export const OneMonokai: ExtensionInfo = {
 };
 
 export const TEMP_DIR_PATH = "dist/temp";
-
-// same as extensionDevelopmentPath in .vscode/launch.json args
-export const OUTPUT_EXTENSION_DIR_PATH = "dist/extension";
 
 export const THEME_APPEND_CONFIG = {
     $schema: "vscode://schemas/color-theme",

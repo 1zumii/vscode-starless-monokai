@@ -7,7 +7,7 @@
             "type": "extensionHost",
             "request": "launch",
             "args": [
-                "--extensionDevelopmentPath=${workspaceFolder}/dist/extension"
+                "--extensionDevelopmentPath=${workspaceFolder}/dist/output-ext" // matches OUTPUT_EXTENSION_DIR_PATH
             ],
             "preLaunchTask": "prelaunch"
         }

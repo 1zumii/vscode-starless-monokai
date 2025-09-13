@@ -31,4 +31,10 @@ export default eslint(
             ],
         },
     },
+    {
+        files: ["tsconfig.json"],
+        rules: {
+            "jsonc/sort-keys": "off",
+        },
+    },
 );
