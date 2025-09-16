@@ -1,6 +1,3 @@
-// DEBUG:
-/* eslint-disable no-console */
-
 import process from "node:process";
 import os from "node:os";
 import * as VSCode from "vscode";
@@ -14,8 +11,6 @@ export const Platform = {
 
 export function getPlatformType(): typeof Platform[keyof typeof Platform] {
     const platform = process.platform;
-
-    console.log("getPlatformType", platform);
 
     if (platform === "darwin") {
         return Platform.MAC;
@@ -45,8 +40,6 @@ export const App = {
 
 export function getAppType(): typeof App[keyof typeof App] {
     const current = VSCode.env.appName;
-
-    console.log("getAppType", { currentApp: current });
 
     if (["Visual Studio Code", "Visual Studio Code - Insiders"].includes(current)) {
         return App.VS_CODE;
