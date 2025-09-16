@@ -9,7 +9,7 @@ import fse from "fs-extra";
 import * as VSCode from "vscode";
 import { RegisterCommand } from "../extension-manifest.ts";
 import { type ResourceFiles, applyVibrancy, revertVibrancy } from "./main.ts";
-import { Logger } from "./logger.ts";
+import { Logger } from "./utils/logger.ts";
 
 async function getResourcePaths(): Promise<ResourceFiles> {
     try {
