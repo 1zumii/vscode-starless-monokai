@@ -60,12 +60,20 @@ export async function activate(context: VSCode.ExtensionContext) {
             await revertVibrancy(resourceFiles);
 
             applyVibrancy(resourceFiles);
+
+            // TODO: prompt: restart to take effect
+
+            // TODO: apply new check sum
         },
     );
     const revertCommand = VSCode.commands.registerCommand(
         RegisterCommand.ApplyVibrancy.command,
         () => {
             revertVibrancy(resourceFiles);
+
+            // TODO: prompt: restart to take effect
+
+            // TODO: revert check sum
         },
     );
 
