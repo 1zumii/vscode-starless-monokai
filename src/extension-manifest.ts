@@ -6,7 +6,7 @@
 
 const VERSION = "1.1.2" satisfies `${number}.${number}.${number}`;
 
-export const EXTENSION_ENTRY_DIR = "runtime";
+export const EXTENSION_ENTRY_DIR = "extension";
 
 // relative from root dir
 export const COMMON_FILES: ([file: string] | [sourceFile: string, rename: string])[] = [

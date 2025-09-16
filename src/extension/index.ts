@@ -57,23 +57,33 @@ export async function activate(context: VSCode.ExtensionContext) {
     const applyCommand = VSCode.commands.registerCommand(
         RegisterCommand.ApplyVibrancy.command,
         async () => {
-            await revertVibrancy(resourceFiles);
+            try {
+                await revertVibrancy(resourceFiles);
 
-            applyVibrancy(resourceFiles);
+                await applyVibrancy(resourceFiles);
 
-            // TODO: prompt: restart to take effect
+                // TODO: prompt: restart to take effect
 
-            // TODO: apply new check sum
+                // TODO: apply new check sum
+            }
+            catch (err) {
+                Logger.error(err as any);
+            }
         },
     );
     const revertCommand = VSCode.commands.registerCommand(
         RegisterCommand.ApplyVibrancy.command,
-        () => {
-            revertVibrancy(resourceFiles);
+        async () => {
+            try {
+                await revertVibrancy(resourceFiles);
 
-            // TODO: prompt: restart to take effect
+                // TODO: prompt: restart to take effect
 
-            // TODO: revert check sum
+                // TODO: revert check sum
+            }
+            catch (err) {
+                Logger.error(err as any);
+            }
         },
     );
 

@@ -6,7 +6,7 @@ import { COMMON_FILES, EXTENSION_ENTRY_DIR, MANIFEST, MANIFEST_SOURCES_KEY } fro
 import type { MonokaiGenerateResult } from "./theme-generator/monokai-generator.ts";
 
 // same as extensionDevelopmentPath in .vscode/launch.json args
-export const OUTPUT_EXTENSION_DIR_PATH = "dist/extension";
+export const OUTPUT_EXTENSION_DIR_PATH = "dist/output-ext";
 
 export const outputExtension = async (themes: MonokaiGenerateResult[]) => {
     const projectRoot = process.cwd();

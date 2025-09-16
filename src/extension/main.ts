@@ -10,7 +10,7 @@ export type ResourceFiles = {
     workbenchHTML: string;
 };
 
-const INJECT_TRUST_TYPE = "vscodeVibrancy";
+export const INJECT_TRUST_TYPE = "vscodeVibrancy";
 
 /**
  * patch `vs/code/electron-(sandbox|browser)/workbench.html`,
@@ -22,12 +22,14 @@ async function installWorkbenchHTML(filePath: string) {
         return;
     }
 
+    const workbenchHTML = await fs.readFile(filePath, "utf-8");
+
     // workbench add CSP trustedTypes
 
     // NOTE:
-    // 用 ast grep 来注入 trustedTypes
+    // 不用 ast grep，直接 replace
 
-    console.log(filePath, INJECT_TRUST_TYPE);
+    console.log(filePath, INJECT_TRUST_TYPE, workbenchHTML);
 }
 
 async function uninstallWorkbenchHTML(filePath: string) {
@@ -64,8 +66,13 @@ async function installRuntimePatch(filePath: string) {
      * vibrancy-continued v1.1.19, v1.1.20
      */
     if (!jsFileContent.includes("visualEffectState")) {
-        jsFileContent = jsFileContent.replace(/experimentalDarkMode/g, "visualEffectState:\"active\",experimentalDarkMode");
+        jsFileContent = jsFileContent.replace(
+            /experimentalDarkMode/g,
+            "visualEffectState:\"active\",experimentalDarkMode",
+        );
     }
+
+    const vibrancyType = "under-window"; // for macos
 
     // NOTE:
     // https://github.com/EYHN/vscode-vibrancy/blob/master/runtime/index.js
@@ -93,6 +100,8 @@ async function installRuntimePatch(filePath: string) {
     // electron.app.on('browser-window-created') -> 'dom-ready'
     // -> window.setVibrancy(type);
     // -> hack 操作 setBound 强制刷新 macOS 窗口的 vibrancy 效果（？）
+
+    console.log(vibrancyType);
 }
 
 async function uninstallRuntimePatch(filePath: string) {
