@@ -1,7 +1,11 @@
 // DEBUG:
 /* eslint-disable no-console */
 
+// gggggeminiii0822@gmail.com
+// GGGGGemini920817
+
 import fs from "node:fs/promises";
+import { Lang, parse } from "@ast-grep/napi";
 import { getAppType, getPlatformType } from "./utils/env";
 
 export type ResourceFiles = {
@@ -17,19 +21,65 @@ export const INJECT_TRUST_TYPE = "vscodeVibrancy";
  * register Content Security Policy: Trust Types
  */
 async function installWorkbenchHTML(filePath: string) {
-    // DEBUG:
-    if (true) {
+    // 1. Read the HTML file content
+    const workbenchHTML = await fs.readFile(filePath, "utf-8");
+    // 2. Parse the HTML using the recommended `Lang` enum from ast-grep
+    const root = parse(Lang.Html, workbenchHTML).root();
+    // 3. Find the CSP meta tag and extract the content attribute value.
+    const matchNode = root.find("<meta http-equiv=\"Content-Security-Policy\" content=$CONTENT>");
+    const contentValueNode = matchNode?.getMatch("CONTENT");
+    const rawContent = contentValueNode?.text();
+
+    // 4. If no match, or if the content attribute is empty, throw an error.
+    if (!rawContent) {
+        throw new Error(
+            "Could not find a valid 'content' attribute in the CSP meta tag. "
+            + "This is likely due to an incompatible VS Code update. "
+            + "Please check plugin compatibility or file an issue.",
+        );
+    }
+    // 5. Strip quotes from the attribute value.
+    const contentAttr = rawContent.slice(1, -1);
+
+    const cspContent = contentAttr;
+
+    // 6. If the CSP already includes the trust type, no modification is needed.
+    if (cspContent.includes(INJECT_TRUST_TYPE)) {
+        console.log("CSP already includes the required trust type. No changes needed.");
         return;
     }
 
-    const workbenchHTML = await fs.readFile(filePath, "utf-8");
+    // 7. Use a regular expression to find the 'trusted-types' directive.
+    const trustTypesRegex = /trusted-types\s+([^;]+)/;
+    const match = cspContent.match(trustTypesRegex);
 
-    // workbench add CSP trustedTypes
+    let newCspContent;
 
-    // NOTE:
-    // 不用 ast grep，直接 replace
+    if (match) {
+        // If the 'trusted-types' directive exists, append our type to the existing list.
+        const existingTypes = match[1].trim();
+        const newTypes = `${existingTypes} ${INJECT_TRUST_TYPE}`;
+        newCspContent = cspContent.replace(trustTypesRegex, `trusted-types ${newTypes}`);
+    }
+    else {
+        // If the 'trusted-types' directive does not exist, throw error.
+        throw new Error("The 'trusted-types' directive is missing from the Content-Security-Policy.");
+    }
 
-    console.log(filePath, INJECT_TRUST_TYPE, workbenchHTML);
+    // 8. Generate the new meta tag and the final HTML content.
+    const originalMetaTag = matchNode!.text();
+    const newMetaTag = originalMetaTag.replace(cspContent, newCspContent);
+    const newWorkbenchHTML = workbenchHTML.replace(originalMetaTag, newMetaTag);
+
+    // 9. Write the changes back to the file (currently commented out).
+    // await fs.writeFile(filePath, newWorkbenchHTML, "utf-8");
+
+    // TODO: Let Gemini run a one-off validation script.
+
+    // DEBUG: Log the modified file content to verify correctness.
+    console.log("--- Modified workbench.html Content Preview ---");
+    console.log(newWorkbenchHTML);
+    console.log("--- End of Preview ---");
 }
 
 async function uninstallWorkbenchHTML(filePath: string) {
@@ -102,6 +152,8 @@ async function installRuntimePatch(filePath: string) {
     // -> hack 操作 setBound 强制刷新 macOS 窗口的 vibrancy 效果（？）
 
     console.log(vibrancyType);
+
+    // TODO: 改动先输出到 file
 }
 
 async function uninstallRuntimePatch(filePath: string) {
