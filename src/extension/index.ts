@@ -8,7 +8,7 @@ import process from "node:process";
 import fse from "fs-extra";
 import * as VSCode from "vscode";
 import { RegisterCommand } from "../extension-manifest.ts";
-import { Logger } from "./utils/logger.ts";
+import { Notification } from "./utils/output.ts";
 import { installWorkbenchHTML, uninstallWorkbenchHTML } from "./patch-workbench-html";
 import { installRuntimePatch, uninstallRuntimePatch } from "./patch-runtime";
 
@@ -53,7 +53,7 @@ async function getResourcePaths(): Promise<ResourceFiles> {
         };
     }
     catch (err) {
-        Logger.error(`Resolve app resources failed${err ? `: ${err}` : ""}`);
+        Notification.error(`Resolve app resources failed${err ? `: ${err}` : ""}`);
         throw err;
     }
 }
@@ -89,7 +89,7 @@ export async function activate(context: VSCode.ExtensionContext) {
                 // TODO: apply new check sum
             }
             catch (err) {
-                Logger.error(err as any);
+                Notification.error(err as any);
             }
         },
     );
@@ -104,7 +104,7 @@ export async function activate(context: VSCode.ExtensionContext) {
                 // TODO: revert check sum
             }
             catch (err) {
-                Logger.error(err as any);
+                Notification.error(err as any);
             }
         },
     );

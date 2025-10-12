@@ -1,5 +1,5 @@
 import fs from "node:fs/promises";
-import { Logger } from "./utils/logger";
+import { Notification } from "./utils/output";
 import { INJECT_TRUST_TYPE } from "./constants";
 
 /**
@@ -18,7 +18,7 @@ function injectTrustedType(cspContent: string): string {
     // 2. Find the 'trusted-types' directive.
     const trustedTypesRegex = /(?<!-)\b(trusted-types)\b(?!-)/i;
     if (!trustedTypesRegex.test(cspContent)) {
-        Logger.warn("The 'trusted-types' directive is missing from the Content-Security-Policy. Skipping injection.");
+        Notification.warn("The 'trusted-types' directive is missing from the Content-Security-Policy. Skipping injection.");
         return cspContent;
     }
 
@@ -61,7 +61,7 @@ function transformCspInHtml(workbenchHTML: string, patcher: (csp: string) => str
     const cspContentMatch = workbenchHTML.match(cspContentRegex);
 
     if (!cspContentMatch) {
-        Logger.warn("Could not find Content-Security-Policy meta tag. Skipping transformation.");
+        Notification.warn("Could not find Content-Security-Policy meta tag. Skipping transformation.");
         return workbenchHTML;
     }
     const originalCspContent = cspContentMatch[0];
@@ -88,7 +88,7 @@ export async function installWorkbenchHTML(filePath: string) {
     const patchedWorkbenchHTML = transformCspInHtml(workbenchHTML, injectTrustedType);
 
     if (patchedWorkbenchHTML === workbenchHTML) {
-        Logger.info("Vibrancy CSP already injected. Skipping write.");
+        Notification.info("Vibrancy CSP already injected. Skipping write.");
         return;
     }
 
@@ -110,13 +110,13 @@ export async function uninstallWorkbenchHTML(
 
     if (revertedWorkbenchHTML === workbenchHTML) {
         if (!silent) {
-            Logger.info("Vibrancy CSP not found. Skipping reversion.");
+            Notification.info("Vibrancy CSP not found. Skipping reversion.");
         }
         return;
     }
 
     await fs.writeFile(filePath, revertedWorkbenchHTML, "utf-8");
     if (!silent) {
-        Logger.info(`Successfully reverted Vibrancy CSP from: ${filePath}`);
+        Notification.info(`Successfully reverted Vibrancy CSP from: ${filePath}`);
     }
 }

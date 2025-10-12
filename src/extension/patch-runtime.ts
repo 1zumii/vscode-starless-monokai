@@ -1,9 +1,8 @@
 import fs from "node:fs/promises";
-import { Logger } from "./utils/logger";
+import { Notification } from "./utils/output";
 import { App, Platform, getAppType, getPlatformType } from "./utils/env";
 import { type InjectionData, generateInjectString, replaceInjectionBlock } from "./utils/template";
 import { INJECT_TRUST_TYPE } from "./constants";
-
 import { getResourcePath } from "./resources";
 
 /**
@@ -124,7 +123,7 @@ export async function installRuntimePatch(filePath: string) {
 
     const blockRegex = /\/\/ --- STARLESS-MONOKAI-RUNTIME-START ---[\s\S]*?\/\/ --- STARLESS-MONOKAI-RUNTIME-END ---/;
     if (blockRegex.test(jsFileContent)) {
-        Logger.info("Runtime patch is already installed. Skipping.");
+        Notification.info("Runtime patch is already installed. Skipping.");
         return;
     }
 
@@ -153,7 +152,7 @@ export async function uninstallRuntimePatch(
     const blockRegex = /\n\n\/\/ --- STARLESS-MONOKAI-RUNTIME-START ---[\s\S]*?\/\/ --- STARLESS-MONOKAI-RUNTIME-END ---/g;
     if (!blockRegex.test(jsFileContent)) {
         if (!silent) {
-            Logger.warn("Runtime patch not found. Skipping uninstallation.");
+            Notification.warn("Runtime patch not found. Skipping uninstallation.");
         }
         return;
     }

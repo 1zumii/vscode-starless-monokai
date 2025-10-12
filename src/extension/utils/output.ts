@@ -1,6 +1,6 @@
 import * as VSCode from "vscode";
 
-export const Logger = {
+export const Notification = {
     info: (msg: string) => {
         VSCode.window.showInformationMessage(msg);
     },
